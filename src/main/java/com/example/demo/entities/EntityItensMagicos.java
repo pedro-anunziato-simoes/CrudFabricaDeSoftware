@@ -1,27 +1,34 @@
 package com.example.demo.entities;
 
 import com.example.demo.enums.TipoItens;
-import jakarta.persistence.Entity;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class EntityItensMagicos {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    @Enumerated(EnumType.STRING)
     private TipoItens tipo;
     private int forca;
     private int defesa;
-
+    @ManyToOne
+    @JoinColumn(name = "personagem_id")
+    private EntityPersonagem personagem;
     public EntityItensMagicos(String nome, TipoItens tipo, int forca, int defesa) {
         this.nome = nome;
         this.tipo = tipo;
         if(forca + defesa > 10 && forca > 0 && defesa > 0){
             System.out.println("você só tem 10 pontos de habilidade");
         }
-        this.forca = forca;
         this.defesa = defesa;
+        this.forca = forca;
+
+    }
+
+    public EntityItensMagicos() {
     }
 
     public Long getId() {
@@ -64,5 +71,9 @@ public class EntityItensMagicos {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public void setPersonagem(EntityPersonagem personagem) {
+        this.personagem = personagem;
     }
 }

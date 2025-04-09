@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.entities.EntityItensMagicos;
 import com.example.demo.entities.EntityPersonagem;
+import com.example.demo.enums.TipoItens;
 import com.example.demo.repositories.RepositoryPersonagem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,13 +40,6 @@ public class ServicePersonagem {
         repositoryPersonagem.delete(repositoryPersonagem.findById(id).orElseThrow(() -> new Exception("Personagem não encontrado")));
     }
 
-    public EntityPersonagem adicionarItemMagico(Long itemId,Long personagemId) throws Exception {
-        EntityItensMagicos item = serviceItensMagicos.buscarItemMagico(itemId);
-        EntityPersonagem personagem = repositoryPersonagem.findById(personagemId).orElseThrow(() -> new Exception("Personagem não encontrado"));
-        personagem.getItensMagicos().add(item);
-        return personagem;
-    }
-
     public List<EntityItensMagicos> listarItensMagicosPorPersonagem(Long id) throws Exception {
         EntityPersonagem personagem = repositoryPersonagem.findById(id).orElseThrow(() -> new Exception("Personagem não encontrado"));
         return personagem.getItensMagicos();
@@ -53,14 +47,17 @@ public class ServicePersonagem {
 
     public EntityPersonagem removerItemMagicos(Long personagemId, Long itemMagicoId) throws Exception {
         EntityPersonagem personagem = repositoryPersonagem.findById(personagemId).orElseThrow(() -> new Exception("Personagem não encontrado"));
-        EntityItensMagicos item = serviceItensMagicos.buscarItemMagico(itemMagicoId);
+        EntityItensMagicos item = serviceItensMagicos.buscarItemMagicoById(itemMagicoId);
         personagem.getItensMagicos().remove(item);
         return personagem;
     }
 
-//    public EntityItensMagicos buscarAmuletoPersonagem(Long personagemId, Long amuletoId) throws Exception {
-//        EntityPersonagem personagem = repositoryPersonagem.findById(personagemId).orElseThrow(() -> new Exception("Personagem não encontrado"));
-//        EntityItensMagicos amuleto = serviceItensMagicos.buscarItemMagico(amuletoId);
-//        //personagem.getItensMagicos().find(amuleto);
-//    }
+    public EntityItensMagicos buscarItemAmuleto(Long personagemId) throws Exception {
+        TipoItens amuleto = TipoItens.AMULETO;
+        EntityPersonagem personagem = repositoryPersonagem.findById(personagemId).orElseThrow(() -> new Exception("Personagem não encontrado"));
+       return personagem.getItensMagicos().stream()
+                .filter(item -> item.getTipo().equals(amuleto))
+                .findFirst()
+                .orElse(null);
+    }
 }

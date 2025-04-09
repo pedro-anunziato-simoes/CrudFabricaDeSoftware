@@ -1,38 +1,48 @@
 package com.example.demo.entities;
 
 import com.example.demo.enums.Classe;
-import jakarta.persistence.Entity;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 @Entity
 public class EntityPersonagem {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private String nomeAventureiro;
     private Classe classe;
     private int level;
-    private List<EntityItensMagicos> itensMagicos;
+    @OneToMany(mappedBy = "personagem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<EntityItensMagicos> itensMagicos = new ArrayList<>();
     private int forca;
     private int defesa;
 
-    public EntityPersonagem(String nome, String nomeAventureiro, Classe classe, int level, List<EntityItensMagicos> itensMagicos, int forca, int defesa) {
+    public EntityPersonagem(String nome, String nomeAventureiro,List<EntityItensMagicos> itensMagicos, Classe classe, int level, int forca, int defesa) {
         this.nome = nome;
         this.nomeAventureiro = nomeAventureiro;
+        this.itensMagicos = itensMagicos;
         this.classe = classe;
         this.level = level;
-        this.itensMagicos = itensMagicos;
         if(forca + defesa > 10){
             System.out.println("você só tem 10 pontos de habilidade");
         }
-            this.forca = forca;
             this.defesa = defesa;
+            this.forca = forca;
+
+    }
+
+    public EntityPersonagem() {
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public int getForca() {
